@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual env
+.venv/
+env/
+ENV/
+
+# Poetry
+poetry.lock
+
+# Docker
+*.log
+*.pid
+*.seed
+*.pid.lock
+*.db
+.env
+docker-data/
+postgres_data/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# VSCode / IDE
+.vscode/
+.idea/

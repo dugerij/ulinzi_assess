@@ -1,0 +1,59 @@
+services:
+  backend:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "backend_ulinzi"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/workspace/backend
+      - ./pyproject.toml:/workspace/pyproject.toml:ro
+      - ./poetry.lock:/workspace/poetry.lock:ro
+      - ./tests:/workspace/tests
+      - ./uploads:/workspace/uploads
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    networks:
+      - ulinzi
+
+  db:
+    image: postgres:16
+    restart: always
+    ports:
+      - "5432:5432"
+    container_name: "db_service"
+    env_file:
+      - ./.env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - ulinzi
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: "pgadmin_service"
+    env_file:
+      - ./.env
+    ports: 
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - ulinzi
+
+volumes:
+  db_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  ulinzi:
+    driver: bridge

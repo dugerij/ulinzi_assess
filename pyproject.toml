@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "engineer-test"
+version = "0.1.0"
+description = "A sample RESTAPI AI service"
+authors = ["James <dugeri@voyancehq.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.116.1"
+scikit-learn = "^1.7.1"
+fastapi-utils = "^0.8.0"
+huggingface-hub = "^0.34.3"
+datasets = "^4.0.0"
+transformers = "^4.54.1"
+uvicorn = "^0.35.0"
+sqlalchemy = "^2.0.42"
+psycopg2-binary = "^2.9.10"
+asyncpg = "^0.30.0"
+pydantic = "^2.11.7"
+python-dotenv = "^1.1.1"
+torch = "^2.7.1"
+pytest = "^8.4.1"
+httpx = "^0.28.1"
+
+
+[tool.poetry.group.dev.dependencies]
+httpx = "^0.28.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend"]
