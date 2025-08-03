@@ -34,7 +34,7 @@ clean-db:
 	docker volume rm ulinzi_assess_db_data || true
 
 test:
-	docker compose run --rm backend sh -c "$(PYTEST) -v tests"
+	docker compose run --rm backend sh -c "PYTHONPATH=/workspace $(PYTEST) -v tests"
 
 rebuild:
 	docker compose down -v

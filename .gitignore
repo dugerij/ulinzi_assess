@@ -10,9 +10,6 @@ __pycache__/
 env/
 ENV/
 
-# Poetry
-poetry.lock
-
 # Docker
 *.log
 *.pid

@@ -15,7 +15,7 @@ async def test_root():
 async def test_health():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        response = await ac.get("/api/v1/health")  # stays same
+        response = await ac.get("/api/v1/health") 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
@@ -28,7 +28,7 @@ async def test_predict(monkeypatch):
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        response = await ac.post("/api/v1/predict", json={"text": "Stock prices are rising"})  # <-- fix here
+        response = await ac.post("/api/v1/predict", json={"text": "Stock prices are rising"})  
 
     assert response.status_code == 200
     json_data = response.json()
