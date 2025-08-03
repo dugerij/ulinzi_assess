@@ -107,6 +107,15 @@ This project ships with pgAdmin for managing the PostgreSQL database.
 ![Server Setup Step 2](docs/images/setserver2.png)  
 ![Server Setup Step 3](docs/images/setserver3.png)
 
+The Submitted requests and outcomes are logged in the `RequestLog` table which can be queries via the `/request_log/{request_id}` or`/request_logs` route.
+The table holds the following:
+
+- request_id (UUID): a unique id attached to each request.
+- submitted_headline (String) : The news headline contained in the request.
+- senitment (String): The label assigned to the headline by the model. Could be null in failed request.
+- status (Status): "success" or "failed" depending on the outcome of the request
+- requested_at (TIMESTAMP): A timestamp to track when a request was made.
+
 ## Contributors <a name = "authors"></a>
 
 - [James](https://github.com/dugerij)
