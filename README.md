@@ -10,7 +10,7 @@
 
 ## About <a name = "about"></a>
 
-This project provides a **FastAPI-based REST API** that serves a **Hugging Face fine-tuned sentiment analysis model** for classifying news headlines.  
+This project provides a **FastAPI-based REST API** that serves a **Hugging Face fine-tuned sentiment analysis model** for classifying news headlines. The model being deployed is a fine-tuned distilbert model fine-tuned for this task and available on my [Huggingface profile](https://huggingface.co/Dugerij/news_sentiment_classifier).
 
 The API allows users to:
 
