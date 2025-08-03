@@ -1,20 +1,33 @@
+from contextlib import asynccontextmanager
 from uuid import UUID
 from fastapi import FastAPI, APIRouter
 from backend.utils import verify_env_vars
-from backend.config import ENV, API_VERSION
+from backend.config import API_VERSION
 from backend.service_dependency import init_db, initialize_services
 from backend.models import ClassificationResponse, Headline, RequestLogResponse
 from backend.service_dependency import PredictionServiceDependency
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Set up lifespan events for FastAPI application
+    """
+    verify_env_vars()
+    await init_db()
+    await initialize_services()
+    yield 
+
 
 app = FastAPI(
     title="Engineer_test",
     description="A test API to serve a HuggingFace fine-tuned model",
     docs_url="/docs",
+    lifespan=lifespan
 )
 
 ver_router = APIRouter(prefix=API_VERSION)
 
-@app.get("/", include_in_schema=False)
+@ver_router.get("/", include_in_schema=False)
 async def root():
     return {"status": "API running"}
 
@@ -22,7 +35,7 @@ async def root():
 async def health():
     return {"status": "ok"}
 
-@app.post(
+@ver_router.post(
     "/predict",
     summary="Make a prediction on NEWS heaaline",
     response_model=ClassificationResponse
@@ -43,7 +56,7 @@ async def make_prediction(
     """
     return await prediction_service.submit_request(headline)
 
-@app.get(
+@ver_router.get(
     "/request_log/{request_id}",
     summary="Get a request log from the table in the database using its ID",
     response_model=RequestLogResponse
@@ -64,7 +77,7 @@ async def get_request_log(
     """
     return await prediction_service.get_request_log(request_id)
 
-@app.get("/request_logs", summary="Get all request logs")
+@ver_router.get("/request_logs", summary="Get all request logs")
 async def get_all_request_logs(
         prediction_service: PredictionServiceDependency
 ):
@@ -78,15 +91,6 @@ async def get_all_request_logs(
         List[RequestLogResponse]: A list of all request logs.
     """
     return await prediction_service.get_all_request_logs()
-
-@app.on_event("startup")
-async def startup_event():
-    """
-    Initialize the FastAPI application and set up the database and services.
-    """
-    verify_env_vars()
-    await init_db()
-    await initialize_services()
 
 app.include_router(ver_router)
 

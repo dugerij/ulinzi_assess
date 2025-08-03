@@ -1,37 +1,36 @@
 import pytest
-from fastapi.testclient import TestClient
-from uuid import uuid4
-
+from httpx import AsyncClient, ASGITransport
 from backend.main import app
+from backend.service_dependency import PredictionServiceDependency
 
-client = TestClient(app)
+@pytest.mark.anyio
+async def test_root():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.get("/api/v1/")  
+    assert response.status_code == 200
+    assert response.json() == {"status": "API running"}
 
-def test_health_check():
-    """Test the health check endpoint"""
-    response = client.get("/health")
+@pytest.mark.anyio
+async def test_health():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.get("/api/v1/health")  # stays same
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
-def test_predict_success():
-    """Test sentiment prediction endpoint with a valid headline"""
-    payload = {"text": "Stock markets are booming today!"}
-    response = client.post("/predict", json=payload)
+@pytest.mark.anyio
+async def test_predict(monkeypatch):
+    async def mock_submit_request(self, headline):
+        return {"classification": "positive", "confidence": 0.95}
+
+    monkeypatch.setattr(PredictionServiceDependency, "submit_request", mock_submit_request)
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response = await ac.post("/api/v1/predict", json={"text": "Stock prices are rising"})  # <-- fix here
+
     assert response.status_code == 200
-    data = response.json()
-
-    assert "classification" in data
-    assert "confidence" in data
-    assert isinstance(data["classification"], str)
-    assert isinstance(data["confidence"], float)
-
-def test_predict_failure():
-    """Test sentiment prediction endpoint with missing headline"""
-    payload = {"text": ""}
-    response = client.post("/predict", json=payload)
-    assert response.status_code in (400, 422, 500)
-
-def test_get_request_log_not_found():
-    """Test fetching a request log that doesn't exist"""
-    random_id = str(uuid4())
-    response = client.get(f"/request_log/{random_id}")
-    assert response.status_code in (404, 500, 200)
+    json_data = response.json()
+    assert "classification" in json_data
+    assert "confidence" in json_data

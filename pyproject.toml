@@ -22,6 +22,9 @@ python-dotenv = "^1.1.1"
 torch = "^2.7.1"
 pytest = "^8.4.1"
 httpx = "^0.28.1"
+asyncio = "^3.4.3"
+pytest-asyncio = "^1.1.0"
+pytest-trio = "^0.8.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -33,3 +36,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff.lint.isort]
 known-first-party = ["backend"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
